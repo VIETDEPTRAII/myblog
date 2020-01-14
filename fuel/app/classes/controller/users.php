@@ -1,4 +1,7 @@
 <?php
+include 'loginrequest.php';
+include 'loginusecase.php';
+
 use \Firebase\JWT\JWT;
 
 class Controller_Users extends Controller_Rest
@@ -80,7 +83,7 @@ class Controller_Users extends Controller_Rest
         );
         $token = JWT::encode($payload, $key);
 
-        if ( $user != null and password_verify($password, $user->password))
+        if ($user != null and password_verify($password, $user->password))
         {
             return $this->response(array(
                 'data' => array(
@@ -91,6 +94,23 @@ class Controller_Users extends Controller_Rest
         }
         return Response::forge('Login failed!', 404);
     }
+
+    
+    public function post_login_v2()
+    {
+        $login_usecase = new Loginusecase();
+        $session_key = $login_usecase->login(\Input::json('username'), \Input::json('password'));
+        return $this->response(array(
+            'session-key' => $session_key,
+        ));
+    }
+
+
+
+
+
+
+
 
     public function post_validate_token()
     {
