@@ -105,7 +105,19 @@ class Controller_Users extends Controller_Rest
         ));
     }
 
+    public function post_validate_session_key()
+    {
+        $auth_header = \Input::headers('Authorization');
 
+        if ($auth_header == 'Bearer d4b174fe-ef1f-4d9d-98f7-a6ae5bb2564c')
+        {
+            return Response::forge('Validated successfully!');
+        }
+        else
+        {
+            return Response::forge('Validated falied!');
+        }
+    }
 
 
 

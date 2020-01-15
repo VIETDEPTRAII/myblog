@@ -14,7 +14,7 @@ class Loginusecase
         if ($user !== null and password_verify($password, $user->password))
         {
             $session_key = new SessionTokenProvider();
-            return $session_key->generate_session_key();
+            return $session_key->generate_session_key($user->id, $user->email, $user->role_id);
         }
         else
         {
