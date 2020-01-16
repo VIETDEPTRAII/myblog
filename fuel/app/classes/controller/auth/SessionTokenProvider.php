@@ -1,6 +1,6 @@
 <?php
-include 'randomuuid.php';
-include 'sessiontokenrepository.php';
+include 'RandomUuid.php';
+include 'SessionTokenRepository.php';
 
 use \Firebase\JWT\JWT;
 

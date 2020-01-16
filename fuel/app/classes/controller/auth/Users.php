@@ -1,12 +1,8 @@
 <?php
-include 'loginrequest.php';
-include 'loginusecase.php';
+include 'LoginUsecase.php';
 
-use \Firebase\JWT\JWT;
-
-class Controller_Users extends Controller_Rest
+class Controller_Auth_Users extends Controller_Rest
 {
-
     protected $format = 'json';
 
     public function get_all_users()
@@ -62,43 +58,7 @@ class Controller_Users extends Controller_Rest
 
     public function post_login()
     {
-        $password = \Input::json('password');
-
-        $user = Model_Accounts::find('first', array(
-            'where' => array(
-                array('email' => \Input::json('email')),
-            ),
-        ));
-
-        $key = "example_key";
-        $payload = array(
-            "iss" => "http://example.org",
-            "aud" => "http://example.com",
-            "iat" => 1356999524,
-            "nbf" => 1357000000,
-            "data" => array(
-                "id" => $user->id,
-                "email" => $user->email
-            )
-        );
-        $token = JWT::encode($payload, $key);
-
-        if ($user != null and password_verify($password, $user->password))
-        {
-            return $this->response(array(
-                'data' => array(
-                    'email' => $user->email,
-                    'token' => $token,
-                ),
-            ));
-        }
-        return Response::forge('Login failed!', 404);
-    }
-
-    
-    public function post_login_v2()
-    {
-        $login_usecase = new Loginusecase();
+        $login_usecase = new LoginUsecase();
         $session_key = $login_usecase->login(\Input::json('username'), \Input::json('password'));
         return $this->response(array(
             'session-key' => $session_key,
@@ -118,11 +78,6 @@ class Controller_Users extends Controller_Rest
             return Response::forge('Validated falied!');
         }
     }
-
-
-
-
-
 
     public function post_validate_token()
     {

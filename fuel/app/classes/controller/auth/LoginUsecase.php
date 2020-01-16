@@ -1,7 +1,7 @@
 <?php
-include 'sessiontokenprovider.php';
+include 'SessionTokenProvider.php';
 
-class Loginusecase 
+class LoginUsecase
 {
     public function login($username, $password)
     {
