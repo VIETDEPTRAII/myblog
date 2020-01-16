@@ -1,5 +1,6 @@
 <?php
 include 'LoginUsecase.php';
+include 'SessionKeyValidationUseCase.php';
 
 class Controller_Auth_Users extends Controller_Rest
 {
@@ -68,14 +69,15 @@ class Controller_Auth_Users extends Controller_Rest
     public function post_validate_session_key()
     {
         $auth_header = \Input::headers('Authorization');
-
-        if ($auth_header == 'Bearer d4b174fe-ef1f-4d9d-98f7-a6ae5bb2564c')
+        if ($auth_header)
         {
-            return Response::forge('Validated successfully!');
+            $sessionKey_validation = new SessionKeyValidationUseCase();
+            $result = $sessionKey_validation->find_session_key($auth_header);
+            return Response::forge($result);
         }
         else
         {
-            return Response::forge('Validated falied!');
+            return Response::forge('401 unauthorized');
         }
     }
 
