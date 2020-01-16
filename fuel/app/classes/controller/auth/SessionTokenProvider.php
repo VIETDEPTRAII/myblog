@@ -32,7 +32,7 @@ class SessionTokenProvider
 
         // save session_key and token into database
         $session_token_repository = new SessionTokenRepository();
-        $session_token_repository->save_session_token($session_key, $token);
+        $session_token_repository->save_session_token($session_key, $token, $user_id);
         return $session_key;
     }
 }
