@@ -10,9 +10,7 @@ class Controller_Auth_Users extends Controller_Rest
     {
         $users = Model_Accounts::query()->select(array('password' => false))->get();
 
-        return $this->response(array(
-            'data' => $users
-        ));
+        return $this->response($users, 200);
     }
 
     public function get_user_detail($id)
@@ -24,11 +22,9 @@ class Controller_Auth_Users extends Controller_Rest
 
         if ($users != null)
         {
-            return $this->response(array(
-                'data' => $users
-            ));
+            return $this->response($users, 200);
         }
-        return Response::forge('The user with id '.$id.' does not exist!', 404);
+        return $this->response('The user with id '.$id.' does not exist!', 404);
     }
 
     public function post_new_user()
@@ -49,13 +45,9 @@ class Controller_Auth_Users extends Controller_Rest
             and $user->email != null and !empty($user->email))
         {
             $user->save();
-            return $this->response(array(
-                'message' => 'User was created.'
-            ));
+            return $this->response('User was created!', 201);
         }
-        return $this->response(array(
-            'message' => 'Unable to create user.'
-        ));
+        return $this->response('Unable to create user!', 400);
     }
 
     public function post_login()
@@ -78,40 +70,7 @@ class Controller_Auth_Users extends Controller_Rest
         }
         else
         {
-            return Response::forge('401 unauthorized');
-        }
-    }
-
-    public function post_validate_token()
-    {
-        $token = \Input::json('token');
-        $key = "example_key";
-        if ($token)
-        {
-            // if decode succeed, show user details
-            try {
-                $decoded = JWT::decode($token, $key, array('HS256'));
-                return $this->response(array(
-                    'data' => array(
-                        'message' => "Access granted.",
-                        'data' => $decoded->data
-                    ),
-                ));
-            }
-            // if decode fails, it means token is invalid
-            catch (Exception $e) {
-                return $this->response(array(
-                    'data' => array(
-                        'message' => "Access granted.",
-                        'error' => $e->getMessage()
-                    ),
-                ));
-            }
-        }
-        // show error message if token is empty
-        else
-        {
-            return Response::forge('Access denied.', 404);
+            return Response::forge('401 unauthorized', 401);
         }
     }
 
