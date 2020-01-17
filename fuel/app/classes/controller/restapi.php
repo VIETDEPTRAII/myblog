@@ -1,8 +1,10 @@
 <?php
+include __DIR__.'./auth/MyRest.php';
 
-class Controller_RestAPI extends Controller_Rest
+class Controller_RestAPI extends MyRest
 {
     protected $format = 'json';
+    protected $auth = 'token';
 
     /**
      * @return object

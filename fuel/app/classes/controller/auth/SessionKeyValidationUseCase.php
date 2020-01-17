@@ -17,17 +17,17 @@ class SessionKeyValidationUseCase
             $today = Date('Y-m-d H:i:s');
             if (strtotime($expiration_date) <= strtotime($today))
             {
-                return 'Your session key has expired! Login again, please!';
+                return false;
             }
             else
             {
-                return 'Your session key is valid!';
+                return true;
             }
         }
         // if token isn't exist
         else
         {
-            return 'Your session key is wrong!';
+            return false;
         }
     }
 }
