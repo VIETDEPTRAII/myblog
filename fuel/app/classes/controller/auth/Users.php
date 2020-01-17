@@ -33,13 +33,14 @@ class Controller_Auth_Users extends Controller_Rest
 
     public function post_new_user()
     {
-        $user = new Model_Accounts();
+        $email = \Input::json('email');
         $password = \Input::json('password');
         $password_hash = password_hash($password, PASSWORD_BCRYPT, array(
             'cost' => 12
         ));
 
-        $user->email = \Input::json('email');
+        $user = new Model_Accounts();
+        $user->email = $email;
         $user->password = $password_hash;
         $user->created_date = date('Y-m-d H:i:s');
         $user->role_id = 3;
@@ -60,7 +61,7 @@ class Controller_Auth_Users extends Controller_Rest
     public function post_login()
     {
         $login_usecase = new LoginUsecase();
-        $session_key = $login_usecase->login(\Input::json('username'), \Input::json('password'));
+        $session_key = $login_usecase->login(\Input::json('email'), \Input::json('password'));
         return $this->response(array(
             'session-key' => $session_key,
         ));
@@ -72,7 +73,7 @@ class Controller_Auth_Users extends Controller_Rest
         if ($auth_header)
         {
             $sessionKey_validation = new SessionKeyValidationUseCase();
-            $result = $sessionKey_validation->find_session_key($auth_header);
+            $result = $sessionKey_validation->find_token_by_session_key($auth_header);
             return Response::forge($result);
         }
         else
