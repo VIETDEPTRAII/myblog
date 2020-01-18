@@ -25,8 +25,7 @@ class Controller_RolePermission extends Controller_Rest
         $perm = \Model\Auth_Permission::forge(array(
             'area' => \Input::json('area'),
             'permission' => \Input::json('permission'),
-            'description' => \Input::json('description'),
-            'actions' => array(),
+            'description' => \Input::json('description')
         ));
         $perm->save();
         return $this->response($perm, 201);
@@ -57,5 +56,4 @@ class Controller_RolePermission extends Controller_Rest
             return $this->response('Role-Permission was not created!', 400);
         }
     }
-
 }
