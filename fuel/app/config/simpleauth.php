@@ -41,7 +41,7 @@ return array(
 	 *  must include: username, password, email, last_login,
 	 * login_hash, group & profile_fields
 	 */
-	'table_columns' => '*',
+	'table_columns' => null,
 
 	/**
 	 * This will allow you to use the group & acl driver for non-logged in users
@@ -119,12 +119,12 @@ return array(
 	/**
 	 * Salt for the login hash
 	 */
-	'login_hash_salt' => 'Th1s=mY0Wn_$@|+VIETDEPTRAI',
+	'login_hash_salt' => 'Th1s=mY0Wn_$@|VIETDEPTRAIKKK',
 
 	/**
 	 * $_POST key for login username
 	 */
-	'username_post_key' => 'email',
+	'username_post_key' => 'username',
 
 	/**
 	 * $_POST key for login password
