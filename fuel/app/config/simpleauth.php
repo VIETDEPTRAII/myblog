@@ -90,6 +90,9 @@ return array(
 		 * 50   => array('name' => 'Moderators', 'roles' => array('user', 'moderator')),
 		 * 100  => array('name' => 'Administrators', 'roles' => array('user', 'moderator', 'admin')),
 		 */
+        1 => array('name' => 'Users', 'roles' => array('user')),
+        2 => array('name' => 'Staffs', 'roles' => array('staff')),
+        3 => array('name' => 'Admins', 'roles' => array('admin'))
 	),
 
 	/**
@@ -114,6 +117,9 @@ return array(
 		 * Global allow by assigning true to a role (use with care!):
 		 *   'super' => true,
 		 */
+        'user' => array('blog' => array('read')),
+        'staff' => array('blog' => array('create', 'read', 'update')),
+        'admin' => array('blog' => array('create', 'read', 'update', 'delete'))
 	),
 
 	/**

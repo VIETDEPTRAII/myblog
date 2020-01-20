@@ -7,7 +7,7 @@ use \Firebase\JWT\JWT;
 class SessionTokenProvider
 {
 
-    public function generate_session_key($user_id, $user_email, $user_role)
+    public function generate_session_key($user_id, $user_email, $user_group)
     {
         // gen uuid
         $randome_uuid = new RandomUUID();
@@ -24,7 +24,7 @@ class SessionTokenProvider
             "data" => array(
                 "id" => $user_id,
                 "email" => $user_email,
-                "role" => $user_role
+                "group" => $user_group
             )
         );
         $token = JWT::encode($payload, $key_secret);

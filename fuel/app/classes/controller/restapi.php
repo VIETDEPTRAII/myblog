@@ -11,20 +11,27 @@ class Controller_RestAPI extends MyRest
      */
     public function get_all_posts()
     {
-        $posts = Model_Posts::find('all', array(
-            'where' => array(
-                array('deleted_date', null),
-            ),
-            'order_by' => array('created_date' => 'desc'),
-        ));
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.read');
 
-        if ($posts !== null)
+        // If permission return true -> user can get all posts
+        if ($check_auth === true)
         {
-            return $this->response(array(
-                'data' => $posts
+            $posts = Model_Posts::find('all', array(
+                'where' => array(
+                    array('deleted_date', null),
+                ),
+                'order_by' => array('created_date' => 'desc'),
             ));
+            return $this->response($posts, 200);
         }
-        return Response::forge('Posts do not exist!', 404);
+        // Else, user cannot get all posts
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
     /**
@@ -33,19 +40,30 @@ class Controller_RestAPI extends MyRest
      */
     public function get_post_detail($id)
     {
-        $post = Model_Posts::find('first', array(
-            'where' => array(
-                array('id' => $id),
-                array('deleted_date', null),
-            ),
-        ));
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.read');
 
-        if ($post !== null) {
-            return $this->response(array(
-                'data' => $post
+        // If permission return true -> user can get post detail
+        if ($check_auth === true)
+        {
+            $post = Model_Posts::find('first', array(
+                'where' => array(
+                    array('id' => $id),
+                    array('deleted_date', null),
+                ),
             ));
+            if ($post !== null) {
+                return $this->response($post, 200);
+            }
+            return $this->response('The post with id '. $id. ' does not exist!', 404);
         }
-        return Response::forge('The post with id '. $id. ' does not exist!', 404);
+        // Else, user cannot get post detail
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
     /**
@@ -54,17 +72,28 @@ class Controller_RestAPI extends MyRest
      */
     public function post_new_post()
     {
-        $post = new Model_Posts();
-        $post->title = \Input::json('title');
-        $post->category = \Input::json('category');
-        $post->body = \Input::json('body');
-        $post->tags = \Input::json('tags');
-        $post->created_date = date('Y-m-d H:i:s');
-        $post->save();
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.create');
 
-        return $this->response(array(
-            'data' => $post
-        ));
+        // If permission return true -> user can create new post
+        if ($check_auth === true)
+        {
+            $post = new Model_Posts();
+            $post->title = \Input::json('title');
+            $post->category = \Input::json('category');
+            $post->body = \Input::json('body');
+            $post->tags = \Input::json('tags');
+            $post->created_date = date('Y-m-d H:i:s');
+            $post->save();
+            return $this->response($post, 201);
+        }
+        // Else, user cannot create new post
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
     /**
@@ -74,27 +103,39 @@ class Controller_RestAPI extends MyRest
      */
     public function put_post_detail($id)
     {
-        $post = Model_Posts::find('first', array(
-            'where' => array(
-                'id' => $id,
-            ),
-        ));
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.update');
 
-        if ($post !== null) {
-            $post->set(array(
-                'title' => \Input::json('title'),
-                'category' => \Input::json('category'),
-                'body' => \Input::json('body'),
-                'tags' => \Input::json('tags'),
-                'updated_date' => date('Y-m-d H:i:s'),
+        // If permission return true -> user can update post detail
+        if ($check_auth === true)
+        {
+            $post = Model_Posts::find('first', array(
+                'where' => array(
+                    'id' => $id,
+                ),
             ));
-            $post->save();
 
-            return $this->response(array(
-                'data' => $post
-            ));
+            if ($post !== null) 
+            {
+                $post->set(array(
+                    'title' => \Input::json('title'),
+                    'category' => \Input::json('category'),
+                    'body' => \Input::json('body'),
+                    'tags' => \Input::json('tags'),
+                    'updated_date' => date('Y-m-d H:i:s'),
+                ));
+                $post->save();
+                return $this->response($post, 200);
+            }
+            return $this->response('The post with id '. $id. ' does not exist!', 404);
         }
-        return Response::forge('The post with id '. $id. ' does not exist!', 404);
+        // Else, user cannot update post detail
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
     /**
@@ -104,18 +145,33 @@ class Controller_RestAPI extends MyRest
      */
     public function delete_post_detail_by_physical($id)
     {
-        $post = Model_Posts::find('first', array(
-            'where' => array(
-                array('id' => $id),
-                array('deleted_date', null),
-            ),
-        ));
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.delete');
 
-        if ($post !== null) {
-            $post->delete();
-            return Response::forge('You deleted the post with id '. $id. ' successfully!');
+        // If permission return true -> user can delete post detail by physical
+        if ($check_auth === true)
+        {
+            $post = Model_Posts::find('first', array(
+                'where' => array(
+                    array('id' => $id),
+                    array('deleted_date', null),
+                ),
+            ));
+    
+            if ($post !== null) 
+            {
+                $post->delete();
+                return $this->response('You deleted the post with id '. $id. ' successfully!', 200);
+            }
+            return $this->response('The post with id '. $id. ' does not exist or deleted by logic!', 404);
         }
-        return Response::forge('The post with id '. $id. ' does not exist or deleted by logic!', 404);
+        // Else, user cannot delete post detail by physical
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
     /**
@@ -125,23 +181,36 @@ class Controller_RestAPI extends MyRest
      */
     public function put_post_detail_by_logic($id)
     {
-        $post = Model_Posts::find('first', array(
-            'where' => array(
-                array('id' => $id),
-                array('updated_date' => \Input::json('updated_date')),
-            ),
-        ));
+        // Check permission
+        $user_id = $this->_find_user_by_session_key();
+        Auth::force_login($user_id);
+        $check_auth = Auth::has_access('blog.delete');
 
-        if ($post !== null) {
-            $post->set(array(
-                'deleted_date' => date('Y-m-d H:i:s')
+        // If permission return true -> user can delete post detail by logic
+        if ($check_auth === true)
+        {
+            $post = Model_Posts::find('first', array(
+                'where' => array(
+                    array('id' => $id),
+                    array('updated_date' => \Input::json('updated_date')),
+                ),
             ));
-            $post->save();
-            return $this->response(array(
-                'data' => $post
-            ));
+    
+            if ($post !== null) 
+            {
+                $post->set(array(
+                    'deleted_date' => date('Y-m-d H:i:s')
+                ));
+                $post->save();
+                return $this->response($post, 200);
+            }
+            return $this->response('The post with id '. $id. ' does not exist!', 404);
         }
-        return Response::forge('The post with id '. $id. ' does not exist!', 404);
+        // Else, user cannot delete post detail by logic
+        else
+        {
+            return $this->response($this->error_403, 403);
+        }
     }
 
 }
