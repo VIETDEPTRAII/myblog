@@ -5,16 +5,15 @@ class LoginUsecase
 {
     public function login($username, $password)
     {
-        $user = Model_Accounts::find('first', array(
-            'where' => array(
-                'email' => $username,
-            ),
-        ));
-
-        if ($user !== null and password_verify($password, $user->password))
+        if(Auth::login($username, $password))
         {
+            $user = \Model\Auth_User::find('first', array(
+                'where' => array(
+                    'username' => $username,
+                ),
+            ));
             $session_key = new SessionTokenProvider();
-            return $session_key->generate_session_key($user->id, $user->email, $user->role_id);
+            return $session_key->generate_session_key($user->id, $user->email, $user->group);
         }
         else
         {

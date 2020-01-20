@@ -8,6 +8,6 @@ class Model_Tokens extends Orm\Model
         'token',
         'issued_date',
         'expiration_date',
-        'account_id'
+        'user_id'
     );
 }

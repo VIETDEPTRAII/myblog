@@ -8,33 +8,44 @@ class Controller_Auth_LoginInAPI extends MyRest
 
     public function post_registration()
     {
+        $username = \Input::json('username');
         $email = \Input::json('email');
         $password = \Input::json('password');
-        $password_hash = password_hash($password, PASSWORD_BCRYPT, array(
-            'cost' => 12
-        ));
+        $group_id = \Input::json('group_id');
+        $fullname = \Input::json('fullname');
+        $age = \Input::json('age');
 
-        $user = new Model_Accounts();
-        $user->email = $email;
-        $user->password = $password_hash;
-        $user->created_date = date('Y-m-d H:i:s');
-        $user->role_id = 3;
-
-        if ($user->password != null and !empty($user->password)
-            and $user->email != null and !empty($user->email))
+        if ($username !== null AND $email !== null AND $password !== null)
         {
-            $user->save();
-            return $this->response('User was created!', 201);
+            $user = Auth::create_user(
+                $username,
+                $password,
+                $email,
+                $group_id,
+                array(
+                    'fullname' => $fullname,
+                    'age' => $age
+                )
+            );
+            return $this->response(array(
+                'message' => 'Created user successfully!'
+            ), 201);
         }
-        return $this->response('Unable to create user!', 400);
+        else
+        {
+            return $this->response(array(
+                'message' => 'Can not create user!',
+                'error' => 'Bad request'
+            ), 400);
+        }
     }
 
     public function post_login()
     {
         $login_usecase = new LoginUsecase();
-        $session_key = $login_usecase->login(\Input::json('email'), \Input::json('password'));
+        $session_key = $login_usecase->login(\Input::json('username'), \Input::json('password'));
         return $this->response(array(
-            'session-key' => $session_key,
+            'session-key' => $session_key
         ));
     }
 }

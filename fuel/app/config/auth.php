@@ -20,7 +20,7 @@
  */
 
 return array(
-    'driver'                 => 'Ormauth',
+    'driver'                 => 'Simpleauth',
     'verify_multiple_logins' => true,
     'salt'                   => 'Th1s=mY0Wn_$@|+',
     'iterations'             => 10000,

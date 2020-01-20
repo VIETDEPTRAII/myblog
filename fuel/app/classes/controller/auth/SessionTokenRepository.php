@@ -6,7 +6,7 @@ class SessionTokenRepository
         // find token by user_id
         $user = Model_Tokens::find('first', array(
             'where' => array(
-                'account_id' => $user_id,
+                'user_id' => $user_id,
             ),
         ));
 
@@ -18,7 +18,7 @@ class SessionTokenRepository
             $session_token->token = $token;
             $session_token->issued_date = date('Y-m-d H:i:s');
             $session_token->expiration_date = date('Y-m-d H:i:s', strtotime('+1 week'));
-            $session_token->account_id = $user_id;
+            $session_token->user_id = $user_id;
             $session_token->save();
         }
 
