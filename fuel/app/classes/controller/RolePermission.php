@@ -22,31 +22,31 @@ class Controller_RolePermission extends Controller_Rest
     // Create new permission function
     public function post_permission()
     {
-        $perm = \Model\Auth_Permission::forge(array(
+        $permission = \Model\Auth_Permission::forge(array(
             'area' => \Input::json('area'),
             'permission' => \Input::json('permission'),
             'description' => \Input::json('description')
         ));
-        $perm->save();
-        return $this->response($perm, 201);
+        $permission->save();
+        return $this->response($permission, 201);
     }
 
     // Create role and permission function
     public function post_role_permission()
     {
         $role_id = \Input::json('role_id');
-        $perm_id = \Input::json('perm_id');
+        $permission_id = \Input::json('permission_id');
 
         // get the Role identified by $role_id
         $role = \Model\Auth_Role::find($role_id);
 
-        // get the Permission identified by $perm_id
-        $perm = \Model\Auth_Permission::find($perm_id);
+        // get the Permission identified by $permission_id
+        $permission = \Model\Auth_Permission::find($permission_id);
 
-        if ($role !== null AND $perm !== null)
+        if ($role !== null AND $permission !== null)
         {
             // relate the two
-            $role->permissions[] = $perm;
+            $role->permissions[] = $permission;
             // and save the relation
             $role->save();
             return $this->response($role, 201);
