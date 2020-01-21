@@ -9,11 +9,11 @@ class SessionTokenProvider
 
     public function generate_session_key($user_id, $user_email, $user_group)
     {
-        // gen uuid
+        // generate uuid
         $randome_uuid = new RandomUUID();
         $session_key = $randome_uuid->gen_uuid();
 
-        // gen token
+        // generate token
         $key_secret = "secret";
         $issued_date = time();
         $expiration_date = $issued_date + 604800; // Plus 1 week
