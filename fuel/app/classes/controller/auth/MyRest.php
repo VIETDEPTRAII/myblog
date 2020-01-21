@@ -27,22 +27,11 @@ class MyRest extends Controller_Rest
     protected function _find_user_by_session_key()
     {
         $auth_header = \Input::headers('Authorization');
+
         if ($auth_header)
         {
-            $user = Model_Tokens::find('first', array(
-                'where' => array(
-                    'session_key' => $auth_header
-                ),
-            ));
-
-            if ($user !== null)
-            {
-                return $user->user_id;
-            }
-            else
-            {
-                return false;
-            }
+            $user = Model_Tokens::query()->where('session_key', '=', $auth_header)->get_one();
+            return $user->user_id;
         }
         else
         {
