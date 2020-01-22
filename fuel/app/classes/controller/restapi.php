@@ -1,5 +1,6 @@
 <?php
 include __DIR__.'./auth/MyRest.php';
+include 'blogrepository.php';
 
 class Controller_RestAPI extends MyRest
 {
@@ -9,29 +10,35 @@ class Controller_RestAPI extends MyRest
     /**
      * @return object
      */
-    public function get_all_posts()
+    public function post_all_posts()
     {
         // Check permission
         $user_id = $this->_find_user_by_session_key();
         Auth::force_login($user_id);
         $check_auth = Auth::has_access('blog.read');
 
-        // If permission return true -> user can get all posts
-        if ($check_auth === true)
-        {
-            $posts = Model_Posts::find('all', array(
-                'where' => array(
-                    array('deleted_date', null),
-                ),
-                'order_by' => array('created_date' => 'desc'),
-            ));
-            return $this->response($posts, 200);
-        }
-        // Else, user cannot get all posts
-        else
+        // If permission return false -> user cannot get all posts
+        if ($check_auth === false)
         {
             return $this->response($this->error_403, 403);
         }
+        // If has permission -> user can get all posts
+        $offset = Input::post('offset', 0);
+        $limit = Input::post('limit', 20);
+
+        if ($offset < 0 OR $limit < 0)
+        {
+            return $this->response(array(
+                'message' => 'Offset and Limit must be posotive!',
+                'error' => 'Bad request'
+            ), 400);
+        }
+        $blog_repository = new Controller_BlogRepository();
+        $data = $blog_repository->get_all_posts($offset, $limit);
+        return $this->response(array(
+            'total_of_posts' => $data[0],
+            'posts' => $data[1]
+        ), 200);
     }
 
     /**
@@ -48,11 +55,10 @@ class Controller_RestAPI extends MyRest
         // If permission return true -> user can get post detail
         if ($check_auth === true)
         {
-            $post = Model_Posts::find('first', array(
+            $post = Model_Posts::find($id, array(
                 'where' => array(
-                    array('id' => $id),
-                    array('deleted_date', null),
-                ),
+                    array('deleted_date', null)
+                )
             ));
             if ($post !== null) {
                 return $this->response($post, 200);

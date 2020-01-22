@@ -37,7 +37,7 @@ return array(
 	 */
 
      // Route for get all blogs and post new blog
-    'blog' => array(array('get', new Route('restapi/all_posts')), array('post', new Route('restapi/new_post'))),
+    'blog' => array(array('post', new Route('restapi/all_posts')), array('post', new Route('restapi/new_post'))),
 
     // Route for get blog detail, delete blog detail by physical, delete blog detail by logic and put blog detail
     'blog/(:any)' => array(array('get', new Route('restapi/post_detail/$1')), 
