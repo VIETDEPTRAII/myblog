@@ -13,4 +13,43 @@ class Controller_BlogRepository
         $data = array($total_of_posts, $posts);
         return $data;
     }
+
+    public function get_post_detail($id)
+    {
+        $post = Model_Posts::query()
+            ->where(array('id' => $id, 'deleted_date' => null))
+            ->get_one();
+        return $post;
+    }
+
+    public function post_new_post()
+    {
+        $validation = Validation::forge('my_validation');
+        $validation->add('title', 'Your title')->add_rule('required');
+        $validation->add('category', 'Your category')->add_rule('required');
+        $validation->add('body', 'Your body')->add_rule('required');
+        $validation->add('tags', 'Your tags')->add_rule('required');
+
+        if ($validation->run())
+        {
+            $title = Input::post('title');
+            $category = Input::post('category');
+            $body = Input::post('body');
+            $tags = Input::post('tags');
+
+            $post = new Model_Posts();
+            $post->title = $title;
+            $post->category = $category;
+            $post->body = $body;
+            $post->tags = $tags;
+            $post->created_date = date('Y-m-d H:i:s');
+            $post->save();
+            return $post;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }
