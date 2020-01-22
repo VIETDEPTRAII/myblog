@@ -1,5 +1,6 @@
 <?php
 include __DIR__.'./auth/MyRest.php';
+include 'blogrepository.php';
 
 class Controller_RestAPI extends MyRest
 {
@@ -16,22 +17,28 @@ class Controller_RestAPI extends MyRest
         Auth::force_login($user_id);
         $check_auth = Auth::has_access('blog.read');
 
-        // If permission return true -> user can get all posts
-        if ($check_auth === true)
-        {
-            $posts = Model_Posts::find('all', array(
-                'where' => array(
-                    array('deleted_date', null),
-                ),
-                'order_by' => array('created_date' => 'desc'),
-            ));
-            return $this->response($posts, 200);
-        }
-        // Else, user cannot get all posts
-        else
+        // If permission return false -> user cannot get all posts
+        if ($check_auth === false)
         {
             return $this->response($this->error_403, 403);
         }
+        // If has permission -> user can get all posts
+        $offset = Input::get('offset', 0);
+        $limit = Input::get('limit', 20);
+
+        if ($offset < 0 OR $limit < 0)
+        {
+            return $this->response(array(
+                'message' => 'Offset and Limit must be posotive!',
+                'error' => 'Bad request'
+            ), 400);
+        }
+        $blog_repository = new Controller_BlogRepository();
+        $data = $blog_repository->get_all_posts($offset, $limit);
+        return $this->response(array(
+            'total_of_posts' => $data[0],
+            'posts' => $data[1]
+        ), 200);
     }
 
     /**
@@ -45,25 +52,20 @@ class Controller_RestAPI extends MyRest
         Auth::force_login($user_id);
         $check_auth = Auth::has_access('blog.read');
 
-        // If permission return true -> user can get post detail
-        if ($check_auth === true)
-        {
-            $post = Model_Posts::find('first', array(
-                'where' => array(
-                    array('id' => $id),
-                    array('deleted_date', null),
-                ),
-            ));
-            if ($post !== null) {
-                return $this->response($post, 200);
-            }
-            return $this->response('The post with id '. $id. ' does not exist!', 404);
-        }
-        // Else, user cannot get post detail
-        else
+        // If permission return false -> user cannot get post detail
+        if ($check_auth === false)
         {
             return $this->response($this->error_403, 403);
         }
+        // If has permission -> user can get post detail
+        $blog_repository = new Controller_BlogRepository();
+        $data = $blog_repository->get_post_detail($id);
+
+        if ($data === null)
+        {
+            return $this->response('The post with id '. $id. ' does not exist!', 404);
+        }
+        return $this->response($data, 200);
     }
 
     /**
@@ -77,23 +79,23 @@ class Controller_RestAPI extends MyRest
         Auth::force_login($user_id);
         $check_auth = Auth::has_access('blog.create');
 
-        // If permission return true -> user can create new post
-        if ($check_auth === true)
-        {
-            $post = new Model_Posts();
-            $post->title = \Input::json('title');
-            $post->category = \Input::json('category');
-            $post->body = \Input::json('body');
-            $post->tags = \Input::json('tags');
-            $post->created_date = date('Y-m-d H:i:s');
-            $post->save();
-            return $this->response($post, 201);
-        }
-        // Else, user cannot create new post
-        else
+        // If permission return false -> user cannot create new post
+        if ($check_auth === false)
         {
             return $this->response($this->error_403, 403);
         }
+        // If has permission -> user can create new post
+        $blog_repository = new Controller_BlogRepository();
+        $data = $blog_repository->post_new_post();
+
+        if ($data === null)
+        {
+            return $this->response(array(
+                'message' => 'Cannot create new post',
+                'error' => 'Bad request'
+            ), 400);
+        }
+        return $this->response($data, 201);
     }
 
     /**
