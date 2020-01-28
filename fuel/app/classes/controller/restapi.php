@@ -1,5 +1,6 @@
 <?php
 include __DIR__.'./auth/MyRest.php';
+include 'blogvalidation.php';
 include 'blogrepository.php';
 
 class Controller_RestAPI extends MyRest
@@ -74,27 +75,40 @@ class Controller_RestAPI extends MyRest
      */
     public function post_new_post()
     {
-        // Check permission
+        // Check user's permission to call API
         $user_id = $this->_find_user_by_session_key();
         Auth::force_login($user_id);
         $check_auth = Auth::has_access('blog.create');
 
-        // If permission return false -> user cannot create new post
+        // If has not permission -> user cannot call API
         if ($check_auth === false)
         {
             return $this->response($this->error_403, 403);
         }
-        // If has permission -> user can create new post
-        $blog_repository = new Controller_BlogRepository();
-        $data = $blog_repository->post_new_post();
+        // If has permission -> user can call API
+        $title = \Input::json('title');
+        $category = \Input::json('category');
+        $body = \Input::json('body');
+        $tags = \Input::json('tags');
 
-        if ($data === null)
+        // Start inputs validation
+        $blog_validation = new Controller_BlogValidation();
+        $inputs_validation = $blog_validation->validate_inputs();
+
+        // Inputs validation failed -> response error
+        if (!$inputs_validation->run(\Input::json()))
         {
-            return $this->response(array(
-                'message' => 'Cannot create new post',
-                'error' => 'Bad request'
-            ), 400);
+            foreach ($inputs_validation->error() as $field => $error)
+            {
+                return $this->response(array(
+                    'message' => 'Cannot create new post',
+                    'error' => $error->get_message()
+                ), 400);
+            }
         }
+        // Inputs validation successfully -> create the post and response it
+        $blog_repository = new Controller_BlogRepository();
+        $data = $blog_repository->post_new_post($title, $category, $body, $tags);
         return $this->response($data, 201);
     }
 

@@ -1,5 +1,4 @@
 <?php
-
 class Controller_BlogRepository
 {
     public function get_all_posts($offset, $limit)
@@ -22,34 +21,16 @@ class Controller_BlogRepository
         return $post;
     }
 
-    public function post_new_post()
+    public function post_new_post($title, $category, $body, $tags)
     {
-        $validation = Validation::forge('my_validation');
-        $validation->add('title', 'Your title')->add_rule('required');
-        $validation->add('category', 'Your category')->add_rule('required');
-        $validation->add('body', 'Your body')->add_rule('required');
-        $validation->add('tags', 'Your tags')->add_rule('required');
-
-        if ($validation->run())
-        {
-            $title = Input::post('title');
-            $category = Input::post('category');
-            $body = Input::post('body');
-            $tags = Input::post('tags');
-
-            $post = new Model_Posts();
-            $post->title = $title;
-            $post->category = $category;
-            $post->body = $body;
-            $post->tags = $tags;
-            $post->created_date = date('Y-m-d H:i:s');
-            $post->save();
-            return $post;
-        }
-        else
-        {
-            return null;
-        }
+        $post = new Model_Posts();
+        $post->title = $title;
+        $post->category = $category;
+        $post->body = $body;
+        $post->tags = $tags;
+        $post->created_date = date('Y-m-d H:i:s');
+        $post->save();
+        return $post;
     }
 
 }
