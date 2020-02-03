@@ -36,14 +36,12 @@ return array(
 	 *
 	 */
 
-     // Route for get all blogs and post new blog
-    'blog' => array(array('get', new Route('restapi/all_posts')), array('post', new Route('restapi/new_post'))),
+     // Route for get all posts and post new post
+    'blog' => array(array('get', new Route('post/postapi/all_posts')),
+            array('post', new Route('post/postapi/new_post'))),
 
-    // Route for get blog detail, delete blog detail by physical, delete blog detail by logic and put blog detail
-    'blog/(:any)' => array(array('get', new Route('restapi/post_detail/$1')), 
-    array('delete', new Route('restapi/post_detail_by_physical/$1')), 
-    array('put', new Route('restapi/post_detail/$1'))), 
-
-    // Route for delete blog detail by logic
-    'delete_blog_detail/(:any)' => array(array('put', new Route('restapi/post_detail_by_logic/$1'))),
+    // Route for get post detail, delete post and put post
+    'blog/(:any)' => array(array('get', new Route('post/postapi/post_detail/$1')),
+                    array('delete', new Route('post/postapi/post/$1')),
+                    array('put', new Route('post/postapi/post/$1'))),
 );
