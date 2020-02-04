@@ -1,8 +1,8 @@
 <?php
 include(__DIR__.'/../../repository/postrepository.php');
-include(__DIR__.'/../auth/MyRest.php');
+include(__DIR__.'/../myrest.php');
 
-class Controller_Post_PostApi extends MyRest
+class Controller_Post_PostApi extends Controller_MyRest
 {
     protected $format = 'json';
     protected $auth = 'token';
@@ -195,11 +195,11 @@ class Controller_Post_PostApi extends MyRest
         if ($post === null)
         {
             return $this->response(array(
-                'message' => 'The post with id '. $id. ' does not exist or deleted!',
+                'message' => 'The post with id '. $id. ' does not exist or has been deleted!',
                 'error' => '404 not found'
             ), 404);
         }
-        // If post exist -> delete post and response it
+        // If post exist -> delete post and response deleted successfully message
         if ($post === true)
         {
             return $this->response('You deleted the post with id '. $id. ' successfully!', 200);

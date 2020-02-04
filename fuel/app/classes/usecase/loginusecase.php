@@ -1,7 +1,7 @@
 <?php
-include 'SessionTokenProvider.php';
+include(__DIR__.'/../helper/sessiontokenprovider.php');
 
-class LoginUsecase
+class Usecase_LoginUsecase
 {
     public function login($username, $password)
     {
@@ -12,7 +12,7 @@ class LoginUsecase
                     'username' => $username,
                 ),
             ));
-            $session_key = new SessionTokenProvider();
+            $session_key = new Helper_SessionTokenProvider();
             return $session_key->generate_session_key($user->id, $user->email, $user->group);
         }
         else

@@ -44,4 +44,11 @@ return array(
     'blog/(:any)' => array(array('get', new Route('post/postapi/post_detail/$1')),
                     array('delete', new Route('post/postapi/post/$1')),
                     array('put', new Route('post/postapi/post/$1'))),
+
+    // Route for login account
+    'login' => array(array('post', new Route('auth/loginapi/login'))),
+
+    // Route for register account
+    'registration' => array(array('post', new Route('auth/loginapi/registration'))),
+
 );
