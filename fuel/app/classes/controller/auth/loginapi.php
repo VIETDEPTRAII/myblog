@@ -1,8 +1,8 @@
 <?php
-include 'LoginUsecase.php';
-include 'MyRest.php';
+include(__DIR__.'/../../usecase/loginusecase.php');
+include(__DIR__.'/../myrest.php');
 
-class Controller_Auth_LoginInAPI extends MyRest
+class Controller_Auth_LoginApi extends Controller_MyRest
 {
     protected $format = 'json';
 
@@ -42,7 +42,7 @@ class Controller_Auth_LoginInAPI extends MyRest
 
     public function post_login()
     {
-        $login_usecase = new LoginUsecase();
+        $login_usecase = new Usecase_LoginUsecase();
         $session_key = $login_usecase->login(\Input::json('username'), \Input::json('password'));
         return $this->response(array(
             'session-key' => $session_key

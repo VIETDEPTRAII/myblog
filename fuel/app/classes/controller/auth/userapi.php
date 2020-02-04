@@ -1,7 +1,7 @@
 <?php
-include 'MyRest.php';
+include(__DIR__.'/../myrest.php');
 
-class Controller_Auth_Users extends MyRest
+class Controller_Auth_UserApi extends Controller_MyRest
 {
     protected $format = 'json';
     protected $auth = 'token';

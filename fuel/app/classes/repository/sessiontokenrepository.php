@@ -1,5 +1,5 @@
 <?php
-class SessionTokenRepository
+class Repository_SessionTokenRepository
 {
     public function save_session_token($session_key, $token, $user_id)
     {

@@ -1,5 +1,5 @@
 <?php
-class SessionKeyValidationUseCase
+class Usecase_SessionKeyValidationUseCase
 {
     public function find_token_by_session_key($session_key)
     {

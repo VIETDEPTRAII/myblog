@@ -1,7 +1,7 @@
 <?php
-include 'SessionKeyValidationUseCase.php';
+include(__DIR__.'/../usecase/sessionkeyvalidationusecase.php');
 
-class MyRest extends Controller_Rest
+class Controller_MyRest extends Controller_Rest
 {
 
     protected $error_403 = array(
@@ -14,7 +14,7 @@ class MyRest extends Controller_Rest
         $auth_header = \Input::headers('Authorization');
         if ($auth_header)
         {
-            $sessionKey_validation = new SessionKeyValidationUseCase();
+            $sessionKey_validation = new Usecase_SessionKeyValidationUseCase();
             $result = $sessionKey_validation->find_token_by_session_key($auth_header);
             return $result;
         }
